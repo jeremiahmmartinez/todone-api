@@ -1,15 +1,16 @@
 package unit_tests
 
 import (
-	"api.jwt.auth/services"
-	"api.jwt.auth/services/models"
-	"api.jwt.auth/settings"
+	"todone-api/services"
+	"todone-api/services/models"
+	"todone-api/settings"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/stretchr/testify/assert"
 	. "gopkg.in/check.v1"
 	"net/http"
 	"os"
 	"testing"
+	"todone-api/core/authentication"
 )
 
 func Test(t *testing.T) {
@@ -93,8 +94,8 @@ func (suite *AuthenticationServicesTestSuite) TestLogout(c *C) {
 		Username: "haku",
 		Password: "testing",
 	}
-	authBackend := auth.InitJWTAuthenticationBackend()
-	tokenString, err := authentication.GenerateToken(user.UUID)
+	authBackend := authentication.InitJWTAuthenticationBackend()
+	tokenString, err := authBackend.GenerateToken(user.UUID)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return authBackend.PublicKey, nil
 	})

@@ -1,10 +1,10 @@
 package unit_tests
 
 import (
-	"api.jwt.auth/core/authentication"
-	"api.jwt.auth/core/redis"
-	"api.jwt.auth/services/models"
-	"api.jwt.auth/settings"
+	"todone-api/core/authentication"
+	"todone-api/core/redis"
+	"todone-api/services/models"
+	"todone-api/settings"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/stretchr/testify/assert"
 	. "gopkg.in/check.v1"

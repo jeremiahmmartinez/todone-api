@@ -7,5 +7,5 @@ db_password: BrainAttic
 db_name_tests: db_tests
 
 
-application_dir: /home/vagrant/go/src/api.jwt.authentication/
-go_path: /home/vagrant/go
+application_dir: C:\Users\Jeremy\go\src\todone-api
+go_path: C:\Users\Jeremy\go

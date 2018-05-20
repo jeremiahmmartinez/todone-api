@@ -1,18 +1,19 @@
 package authentication
 
 import (
-	"api.jwt.auth/core/redis"
-	"api.jwt.auth/services/models"
-	"api.jwt.auth/settings"
+	"todone-api/core/redis"
+	"todone-api/model"
+	"todone-api/settings"
 	"bufio"
-	"github.com/pborman/uuid"
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
 	"os"
 	"time"
+	"fmt"
+	userRepo "todone-api/core/repository/user"
 )
 
 type JWTAuthenticationBackend struct {
@@ -38,10 +39,10 @@ func InitJWTAuthenticationBackend() *JWTAuthenticationBackend {
 	return authBackendInstance
 }
 
-func (backend *JWTAuthenticationBackend) GenerateToken(userUUID string) (string, error) {
+func (backend *JWTAuthenticationBackend) GenerateToken(userUUID uint64) (string, error) {
 	token := jwt.New(jwt.SigningMethodRS512)
 	token.Claims = jwt.MapClaims{
-		"exp": time.Now().Add(time.Hour * time.Duration(settings.Get().JWTExpirationDelta)).Unix(),
+		"exp": time.Now().Add(time.Minute * time.Duration(settings.Get().JWTExpirationDelta)).Unix(),
 		"iat": time.Now().Unix(),
 		"sub": userUUID,
 	}
@@ -53,13 +54,17 @@ func (backend *JWTAuthenticationBackend) GenerateToken(userUUID string) (string,
 	return tokenString, nil
 }
 
-func (backend *JWTAuthenticationBackend) Authenticate(user *models.User) bool {
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("testing"), 10)
+func (backend *JWTAuthenticationBackend) Authenticate(user *model.User) bool {
+	userArgs := map[string]interface{}{
+		"username": user.Username,
+	}
 
-	testUser := models.User{
-		UUID:     uuid.New(),
-		Username: "haku",
-		Password: string(hashedPassword),
+	testUser, err := userRepo.GetUser(userArgs)
+
+	fmt.Println(err)
+
+	if err != nil {
+		return false
 	}
 
 	return user.Username == testUser.Username && bcrypt.CompareHashAndPassword([]byte(testUser.Password), []byte(user.Password)) == nil
@@ -68,9 +73,9 @@ func (backend *JWTAuthenticationBackend) Authenticate(user *models.User) bool {
 func (backend *JWTAuthenticationBackend) getTokenRemainingValidity(timestamp interface{}) int {
 	if validity, ok := timestamp.(float64); ok {
 		tm := time.Unix(int64(validity), 0)
-		remainer := tm.Sub(time.Now())
-		if remainer > 0 {
-			return int(remainer.Seconds() + expireOffset)
+		remaining := tm.Sub(time.Now())
+		if remaining > 0 {
+			return int(remaining.Seconds() + expireOffset)
 		}
 	}
 	return expireOffset
@@ -78,7 +83,11 @@ func (backend *JWTAuthenticationBackend) getTokenRemainingValidity(timestamp int
 
 func (backend *JWTAuthenticationBackend) Logout(tokenString string, token *jwt.Token) error {
 	redisConn := redis.Connect()
-	return redisConn.SetValue(tokenString, tokenString, backend.getTokenRemainingValidity(token.Claims.(jwt.MapClaims)["exp"]))
+	timeToExpire := backend.getTokenRemainingValidity(token.Claims.(jwt.MapClaims)["exp"])
+	fmt.Println("========Logout========")
+	fmt.Println(fmt.Sprintf("%s: %d", "Time to EXPIRE:", timeToExpire))
+
+	return redisConn.SetValue(tokenString, tokenString, timeToExpire)
 }
 
 func (backend *JWTAuthenticationBackend) IsInBlacklist(token string) bool {

@@ -1,10 +1,10 @@
 package api_tests
 
 import (
-	"api.jwt.auth/core/authentication"
-	"api.jwt.auth/routers"
-	"api.jwt.auth/services"
-	"api.jwt.auth/settings"
+	"todone-api/core/authentication"
+	"todone-api/routers"
+	"todone-api/services"
+	"todone-api/settings"
 	"fmt"
 	"github.com/codegangsta/negroni"
 	"github.com/stretchr/testify/assert"

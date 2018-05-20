@@ -1,5 +1,17 @@
 {
-  "PrivateKeyPath": "/home/vagrant/go/src/api.jwt.auth/settings/keys/private_key",
-  "PublicKeyPath": "/home/vagrant/go/src/api.jwt.auth/settings/keys/public_key.pub",
-  "JWTExpirationDelta": 72
+  "Database": {
+    "host": "localhost",
+    "port": "3306",
+    "user": "todone_api",
+    "password": "Cloclo4694",
+    "name": "todone_api"
+  },
+  "DefaultPageLimit": 20,
+  "DefaultUserSortKey": "id",
+  "DefaultUserSortDirection": "ASC",
+  "Host": "localhost",
+  "Port": 3306,
+  "PrivateKeyPath": "C:/Users/Jeremy/go/src/todone-api/settings/keys/private_key",
+  "PublicKeyPath": "C:/Users/Jeremy/go/src/todone-api/settings/keys/public_key.pub",
+  "JWTExpirationDelta": 7500
 }

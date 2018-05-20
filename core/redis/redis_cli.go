@@ -1,7 +1,8 @@
 package redis
 
 import (
-	"github.com/garyburd/redigo/redis"
+	"github.com/gomodule/redigo/redis"
+	"fmt"
 )
 
 type RedisCli struct {
@@ -21,7 +22,7 @@ func Connect() (conn *RedisCli) {
 			panic(err)
 		}
 
-		if _, err := instanceRedisCli.conn.Do("AUTH", "Brainattica"); err != nil {
+		if _, err := instanceRedisCli.conn.Do("AUTH", "test"); err != nil {
 			instanceRedisCli.conn.Close()
 			panic(err)
 		}
@@ -41,5 +42,6 @@ func (redisCli *RedisCli) SetValue(key string, value string, expiration ...inter
 }
 
 func (redisCli *RedisCli) GetValue(key string) (interface{}, error) {
+	fmt.Println(redisCli.conn.Do("GET", key))
 	return redisCli.conn.Do("GET", key)
 }

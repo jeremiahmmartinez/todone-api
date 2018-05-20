@@ -1,20 +1,20 @@
 package services
 
 import (
-	"api.jwt.auth/api/parameters"
-	"api.jwt.auth/core/authentication"
-	"api.jwt.auth/services/models"
-	"encoding/json"
-	jwt "github.com/dgrijalva/jwt-go"
-	request "github.com/dgrijalva/jwt-go/request"
 	"net/http"
+	"encoding/json"
+	"github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go/request"
+	"todone-api/api/parameters"
+	"todone-api/core/authentication"
+	"todone-api/model"
 )
 
-func Login(requestUser *models.User) (int, []byte) {
+func Login(requestUser *model.User) (int, []byte) {
 	authBackend := authentication.InitJWTAuthenticationBackend()
 
 	if authBackend.Authenticate(requestUser) {
-		token, err := authBackend.GenerateToken(requestUser.UUID)
+		token, err := authBackend.GenerateToken(requestUser.Id)
 		if err != nil {
 			return http.StatusInternalServerError, []byte("")
 		} else {
@@ -26,9 +26,9 @@ func Login(requestUser *models.User) (int, []byte) {
 	return http.StatusUnauthorized, []byte("")
 }
 
-func RefreshToken(requestUser *models.User) []byte {
+func RefreshToken(requestUser *model.User) []byte {
 	authBackend := authentication.InitJWTAuthenticationBackend()
-	token, err := authBackend.GenerateToken(requestUser.UUID)
+	token, err := authBackend.GenerateToken(requestUser.Id)
 	if err != nil {
 		panic(err)
 	}

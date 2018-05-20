@@ -7,8 +7,6 @@ import (
 	"net/http"
 )
 
-//Test GOOOOOO
-
 func main() {
 	settings.Init()
 

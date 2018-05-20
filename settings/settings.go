@@ -17,6 +17,10 @@ type Settings struct {
 	PrivateKeyPath     string
 	PublicKeyPath      string
 	JWTExpirationDelta int
+	Database 		   map[string]string
+	DefaultPageLimit   int
+	DefaultUserSortKey string
+	DefaultUserSortDirection string
 }
 
 var settings Settings = Settings{}
